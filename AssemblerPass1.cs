@@ -15,9 +15,10 @@ namespace MotorolaAssembler {
             foreach(string line in lines) {
                 char firstChar = line[0];
                 string[] tokens = this.TokenizeLine(line);
+                if (tokens.Length < 1) continue;
                 string firstToken = tokens[0];
 
-                string? operationToken = null;
+                string operationToken = null;
                 string? valueToken = null;
                 if(firstChar == ';') {
                     continue;
@@ -36,11 +37,16 @@ namespace MotorolaAssembler {
                         }
                     }
 
+                    if (tokens.Length < 2) continue;
                     operationToken = tokens[1];
-                    valueToken = tokens[2];
+
+                    if (tokens.Length > 2) 
+                        valueToken = tokens[2];
                 } else {
                     operationToken = firstToken;
-                    valueToken = tokens[1];
+
+                    if(tokens.Length > 1)
+                        valueToken = tokens[1];
                 }
 
                 if (operationToken == null) continue;

@@ -10,10 +10,14 @@ namespace MotorolaAssembler {
 
         static Instruction() {
             RegisterInstruction(new Instruction("ldaa") {
-                immediate = 0x86,
+                immediate=0x86,
                 direct=0x96,
                 indexed=0xA6,
                 extended=0xB6
+            });
+
+            RegisterInstruction(new Instruction("nop") {
+                inherent = 0x01
             });
         }
 
