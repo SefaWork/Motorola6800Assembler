@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,31 +7,38 @@ using System.Threading.Tasks;
 
 namespace MotorolaAssembler {
     public class ValueParser {
+        public static CodeDomProvider CODEDOMPROVIDER = CodeDomProvider.CreateProvider("C#");
 
-        public static int ParseValue(string valueString, Dictionary<string, int>? labels) {
+        public static void ParseValue(string valueString, LineProcess process) {
             bool result;
             int value;
-            if (valueString.StartsWith("$")) {
+
+            char firstChar = valueString[0];
+
+            if (firstChar == '$') {
                 valueString = valueString.Remove(0, 1);
                 // Interpret value as a hexidecimal value.
                 result = int.TryParse(valueString, System.Globalization.NumberStyles.HexNumber, null, out value);
+            } else if (firstChar == '%') {
+                valueString = valueString.Remove(0, 1);
+                // Interpret value as a binary value.
+                result = int.TryParse(valueString, System.Globalization.NumberStyles.BinaryNumber, null, out value);
             } else {
                 // Interpret value as a decimal value.
                 result = int.TryParse(valueString, System.Globalization.NumberStyles.Integer, null, out value);
             }
 
-            if(!result) {
-                if(labels != null) {
-                    if(!labels.TryGetValue(valueString, out value)) {
-                        throw new Exception($"Failed to parse value from sequence \"{valueString}\". Label not found.");
-                    }
+            if (!result) {
+                if (CODEDOMPROVIDER.IsValidIdentifier(valueString)) {
+                    // Could be a label.
+                    process.variable = valueString;
                 } else {
-                    throw new Exception($"Failed to parse value from sequence \"{valueString}\"");
+                    // Does not follow label naming conventions, throw an exception.
+                    throw new Exception($"Invalid value: {valueString}");
                 }
+            } else {
+                process.value = value;
             }
-
-            return value;
         }
-
     }
 }

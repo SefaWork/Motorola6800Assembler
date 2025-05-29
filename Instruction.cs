@@ -16,7 +16,14 @@ namespace MotorolaAssembler {
         private static readonly Dictionary<string, Instruction> INSTRUCTIONS = new Dictionary<string, Instruction>();
 
         private string mnemonic;
-        private Dictionary<AddressingModesEnum, byte> opcodes;
+
+        // List of opcodes.
+        private byte inherent = 0x00;
+        private byte immediate = 0x00;
+        private byte relative = 0x00;
+        private byte direct = 0x00;
+        private byte extended = 0x00;
+        private byte indexed = 0x00;
 
         public static Instruction? GetInstruction(string instruction) {
             if (!INSTRUCTIONS.TryGetValue(instruction.ToLower(), out Instruction? found)) {
@@ -32,88 +39,111 @@ namespace MotorolaAssembler {
 
         private Instruction(string mnemonic) {
             this.mnemonic = mnemonic.ToLower();
-            this.opcodes = [];
         }
 
-        private Instruction AddOpcode(AddressingModesEnum addressingMode, byte opcode) {
-            this.opcodes.Add(addressingMode, opcode);
-            return this;
-        }
+        public byte[]? Process(LineProcess process) {
+            string? valueString = process.valueString;
 
-        public AddressingModesEnum? GetAddressingMode(string? value) {
-            AddressingModesEnum? mode = null;
-            if(value == null) {
-                mode = AddressingModesEnum.Inherent;
-            } else {
-                string lowercase = value.ToLower();
-                if (lowercase.StartsWith("#"))
-                    mode = AddressingModesEnum.Immediate;
-                else if (lowercase.EndsWith(",x"))
-                    mode = AddressingModesEnum.Indexed;
-                else if (this.opcodes.ContainsKey(AddressingModesEnum.Relative))
-                    return AddressingModesEnum.Relative;
-                else {
-                    if (this.opcodes.ContainsKey(AddressingModesEnum.Extended)) {
-                        if (this.opcodes.ContainsKey(AddressingModesEnum.Direct)) {
-                            // check size of input (uhhhhh wtf?)
-                        } else {
-                            return AddressingModesEnum.Extended;
+            if(valueString == null) {
+                if(this.inherent == 0x00) {
+                    throw new Exception("Missing value.");
+                } else {
+                    process.opcode = this.inherent;
+                    process.value = 0;
+                    return [process.opcode];
+                }
+            } else if(valueString != null) {
+                process.size = 2;
+                if (valueString.StartsWith("#")) {
+                    // Use immediate mode.
+                    if (this.immediate == 0x00) {
+                        throw new Exception("Immediate addressing mode not supported.");
+                    } else {
+                        valueString = valueString.Remove(0, 1);
+                        process.opcode = this.immediate;
+                        ValueParser.ParseValue(valueString, process);
+                    }
+                } else if(valueString.EndsWith(",x")) {
+                    // Use indexed mode.
+                    if (this.indexed == 0x00) {
+                        throw new Exception("Indexed addressing mode not supported.");
+                    } else {
+                        valueString = valueString.Remove(valueString.Length - 2, 2);
+                        process.opcode = this.indexed;
+                        ValueParser.ParseValue(valueString, process);
+                    }
+                } else if(this.relative != 0x00) {
+                    // Use relative mode.
+                    process.opcode = this.relative;
+                    process.relative = true;
+                    ValueParser.ParseValue(valueString, process);
+                } else {
+                    // Use direct or extended mode.
+                    ValueParser.ParseValue(valueString, process);
+
+                    int? value = process.value;
+                    if(this.extended != 0x00) {
+                        if(this.direct == 0x00) {
+                            process.size = 3;
+                            process.opcode = this.extended;
+                        } else if(this.direct != 0x00) {
+                            if(value != null) {
+                                if(value > 255) {
+                                    process.size = 3;
+                                    process.opcode = this.extended;
+                                } else {
+                                    process.size = 2;
+                                    process.opcode = this.direct;
+                                }
+                            }
                         }
-                    } else if(this.opcodes.ContainsKey(AddressingModesEnum.Direct)) {
-                        return AddressingModesEnum.Direct;
+                        if (value != null && (value < 0x0 || value > 0xFF)) throw new Exception("Value is out of range.");
+                    } else if(this.direct != 0x00) {
+                        process.size = 2;
+                        process.opcode = this.direct;
+                        if (value != null && (value > 0xF || value < 0x0)) throw new Exception("Value is out of range.");
+                    } else {
+                        throw new Exception("Engine error. Instruction is missing addressing modes.");
                     }
                 }
             }
 
-            if(mode == null)
-                return null;
-            else if (this.opcodes.ContainsKey((AddressingModesEnum)mode))
-                return mode;
-
+            if(process.opcode != 0x00 && process.value != null) {
+                if(process.relative) {
+                    if(process.value > 0) {
+                        return [process.opcode, (byte)(256 + process.value - 2)];
+                    } else {
+                        return [process.opcode, (byte)(process.value)];
+                    }
+                } else {
+                    if (process.value > 255) {
+                        return [process.opcode, (byte)(process.value >> 8), (byte)process.value];
+                    } else {
+                        return [process.opcode, (byte)process.value];
+                    }
+                }
+            }
             return null;
         }
-
-        public byte[] ProcessValue(string? value, Dictionary<string, int>? labels) {
-            if (value == null) {
-                // Use inherent mode.
-                if(!this.opcodes.TryGetValue(AddressingModesEnum.Inherent, out byte opcode)) {
-                    throw new Exception("Operation is missing value.");
-                }
-                return [opcode];
-            } else {
-                string lowercase = value.ToLower();
-                if (lowercase.StartsWith("#")) {
-                    // Use immediate mode.
-
-                    if (!this.opcodes.TryGetValue(AddressingModesEnum.Immediate, out byte opcode)) {
-                        throw new Exception("Operation is missing value.");
-                    }
-
-                    lowercase = lowercase.Remove(0, 1);
-                    int parsedVal = ValueParser.ParseValue(lowercase, labels);
-
-                    if (parsedVal > 255 || parsedVal < 0) {
-                        throw new Exception("Value out of range. (00-FF)");
-                    }
-
-                    return [opcode, Convert.ToByte(parsedVal)];
-                } else if (lowercase.EndsWith(",x")) {
-                    // Use indexed mode.
-                } else {
-                    // Use relative, direct or extended mode.
-                }
-            }
-
-            return [];
-        }
     }
-    
-    public enum AddressingModesEnum: byte {
-        Inherent = 1,
-        Immediate,
-        Relative,
-        Direct,
-        Extended,
-        Indexed
+
+    public class LineProcess {
+        public Instruction instruction;
+
+        public int line = 0;
+        public int address = 0;
+        public int size = 1;
+        public byte opcode = 0x00;
+
+        public string? valueString;
+        public string? variable;
+
+        public int? value = null;
+        public bool relative = false;
+
+        public LineProcess(Instruction instruction, string? valueString) {
+            this.instruction = instruction;
+            this.valueString = valueString;
+        }
     }
 }

@@ -9,12 +9,12 @@ namespace MotorolaAssembler {
     public partial class Instruction {
 
         static Instruction() {
-            RegisterInstruction(new Instruction("ldaa")
-                .AddOpcode(AddressingModesEnum.Immediate, 0x86)
-                .AddOpcode(AddressingModesEnum.Direct, 0x96)
-                .AddOpcode(AddressingModesEnum.Indexed, 0xA6)
-                .AddOpcode(AddressingModesEnum.Extended, 0xB6)
-            );
+            RegisterInstruction(new Instruction("ldaa") {
+                immediate = 0x86,
+                direct=0x96,
+                indexed=0xA6,
+                extended=0xB6
+            });
         }
 
     }

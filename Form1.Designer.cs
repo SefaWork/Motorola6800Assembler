@@ -128,7 +128,7 @@
             Controls.Add(assemblyCode);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Motorola3800 Assembler";
+            Text = "Motorola6800 Assembler";
             Load += Form1_Load;
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
