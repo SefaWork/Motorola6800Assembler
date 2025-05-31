@@ -6,35 +6,37 @@ using System.Threading.Tasks;
 
 namespace MotorolaAssembler {
     public partial class Assembler {
-        private List<byte> SecondPass(string[] lines) {
-            int pc = 0;
+        private List<byte[]> SecondPass(string[] lines) {
 
-            this.lineIndex = 0;
-            List<byte> byteList = new List<byte>();
+            this.lineIndex = -1;
+            this.pc = 0;
 
-            foreach(LineProcess process in processList) {
-                int diff = pc - process.address;
-                if(process.variable != null) {
-                    if (!labels.TryGetValue(process.variable, out int val)) throw new Exception($"Line {lineIndex}: Invalid token.");
-                    if(process.relative) {
-                        process.value = val + diff - pc;
-                    } else {
-                        process.value = val + diff;
-                    }
-                }
+            List<byte[]> bytes = [];
 
-                process.address = pc;
-                byte[]? values = process.instruction.Process(process);
-                pc += process.size;
 
-                if(values != null) {
-                    foreach(byte sequence in values) {
-                        byteList.Add(sequence);
-                    }
+            foreach(AssemblerLineData data in this.compiledLines) {
+                this.lineIndex++;
+                if (data.instruction == null) continue;
+
+                data.address = this.pc;
+
+                try {
+                    bytes.Add(data.instruction.GetData(this, data));
+                    data.instruction.IncrementPC(this, data);
+                } catch(Exception e) {
+                    throw new Exception($"Line {this.lineIndex}: {e.Message}", e);
                 }
             }
 
-            return byteList;
+            this.lineIndex = -1;
+            this.pc = 0;
+            this.compiledLines.Clear();
+            this.labels.Clear();
+            this.constants.Clear();
+            this.variables.Clear();
+            this.endReached = false;
+
+            return bytes;
         }
     }
 }

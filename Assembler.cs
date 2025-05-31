@@ -10,24 +10,58 @@ namespace MotorolaAssembler {
 
     public partial class Assembler {
 
-        private static readonly Regex labelRegex = new Regex(@"^[a-zA-Z]+$");
+        public int lineIndex;
 
-        private int lineIndex;
-        private List<LineProcess> processList;
-        private Dictionary<string, int> labels;
+        /// <summary>
+        /// Current list of line data.
+        /// </summary>
+        public List<AssemblerLineData> compiledLines;
+
+        /// <summary>
+        /// List of constants defined with assembler directives.
+        /// </summary>
+        public Dictionary<string, int> constants;
+
+        /// <summary>
+        /// List of labels defined.
+        /// </summary>
+        public Dictionary<string, AssemblerLineData> labels;
+
+        /// <summary>
+        /// List of line data that use variables such as constants or labels.
+        /// </summary>
+        public List<AssemblerLineData> variables;
+
+        /// <summary>
+        /// Program counter.
+        /// </summary>
+        public int pc;
+
+        /// <summary>
+        /// Set to true when .end is reached.
+        /// </summary>
+        public bool endReached;
 
         public Assembler() {
             this.lineIndex = 0;
+            this.pc = 0;
             this.labels = [];
-            this.processList = [];
+            this.constants = [];
+            this.variables = [];
+            this.compiledLines = [];
+            this.endReached = false;
         }
 
         private string[] TokenizeLine(string line) {
-            return line.Trim().Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            int commentIndex = line.IndexOf(';');
+            if (commentIndex >= 0)
+                line = line.Substring(0, commentIndex);
+
+            return line.Split([' ', '\t'], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public List<byte> AssembleText(string text) {
-            string[] lines = text.Split('\n');
+        public List<byte[]> AssembleText(string text) {
+            string[] lines = text.ToLower().Split('\n');
 
             this.FirstPass(lines);
             return this.SecondPass(lines);

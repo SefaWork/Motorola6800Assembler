@@ -29,6 +29,9 @@
             toolStripSeparator1 = new ToolStripSeparator();
             assembleButton = new ToolStripButton();
             machineCode = new TextBox();
+            fullObjectCode = new TextBox();
+            label1 = new Label();
+            label2 = new Label();
             toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -37,12 +40,12 @@
             assemblyCode.AcceptsTab = true;
             assemblyCode.BackColor = Color.White;
             assemblyCode.Font = new Font("Ubuntu Mono", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            assemblyCode.Location = new Point(12, 30);
+            assemblyCode.Location = new Point(12, 55);
             assemblyCode.Multiline = true;
             assemblyCode.Name = "assemblyCode";
             assemblyCode.PlaceholderText = "Write your Motorola6800 assembly code in here.";
             assemblyCode.ScrollBars = ScrollBars.Both;
-            assemblyCode.Size = new Size(461, 477);
+            assemblyCode.Size = new Size(510, 452);
             assemblyCode.TabIndex = 2;
             assemblyCode.WordWrap = false;
             assemblyCode.TextChanged += textBox1_TextChanged;
@@ -53,7 +56,7 @@
             toolStrip1.Items.AddRange(new ToolStripItem[] { clearButton, saveButton, loadButton, toolStripSeparator1, assembleButton });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(833, 27);
+            toolStrip1.Size = new Size(882, 27);
             toolStrip1.TabIndex = 5;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -76,7 +79,7 @@
             saveButton.Name = "saveButton";
             saveButton.Size = new Size(29, 24);
             saveButton.Text = "toolStripButton6";
-            saveButton.ToolTipText = "Save Machine Code";
+            saveButton.ToolTipText = "Save Object Code";
             saveButton.Click += saveButton_Click;
             // 
             // loadButton
@@ -109,20 +112,56 @@
             // 
             machineCode.BackColor = Color.FromArgb(255, 255, 200);
             machineCode.Font = new Font("Ubuntu Mono", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            machineCode.Location = new Point(479, 30);
+            machineCode.Location = new Point(528, 55);
             machineCode.Multiline = true;
             machineCode.Name = "machineCode";
-            machineCode.PlaceholderText = "Machine code will show up here after clicking Assemble button.";
+            machineCode.PlaceholderText = "Line by line translation shows up here";
             machineCode.ReadOnly = true;
             machineCode.ScrollBars = ScrollBars.Both;
-            machineCode.Size = new Size(342, 477);
+            machineCode.Size = new Size(342, 452);
             machineCode.TabIndex = 6;
+            // 
+            // fullObjectCode
+            // 
+            fullObjectCode.BackColor = Color.FromArgb(192, 255, 255);
+            fullObjectCode.Font = new Font("Ubuntu Mono", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            fullObjectCode.Location = new Point(12, 513);
+            fullObjectCode.Multiline = true;
+            fullObjectCode.Name = "fullObjectCode";
+            fullObjectCode.PlaceholderText = "Machine code will show up here after clicking Assemble button.";
+            fullObjectCode.ReadOnly = true;
+            fullObjectCode.ScrollBars = ScrollBars.Both;
+            fullObjectCode.Size = new Size(858, 128);
+            fullObjectCode.TabIndex = 7;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Ubuntu Mono", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.Location = new Point(12, 32);
+            label1.Name = "label1";
+            label1.Size = new Size(140, 21);
+            label1.TabIndex = 8;
+            label1.Text = "Assembly Code";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Ubuntu Mono", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.Location = new Point(528, 32);
+            label2.Name = "label2";
+            label2.Size = new Size(250, 21);
+            label2.TabIndex = 9;
+            label2.Text = "Line by Line Translation";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(833, 544);
+            ClientSize = new Size(882, 653);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(fullObjectCode);
             Controls.Add(machineCode);
             Controls.Add(toolStrip1);
             Controls.Add(assemblyCode);
@@ -145,5 +184,8 @@
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripButton assembleButton;
         private TextBox machineCode;
+        private TextBox fullObjectCode;
+        private Label label1;
+        private Label label2;
     }
 }

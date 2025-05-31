@@ -1,4 +1,5 @@
 using System.Text;
+using System.Windows.Forms;
 
 namespace MotorolaAssembler
 {
@@ -16,9 +17,11 @@ namespace MotorolaAssembler
         }
 
         private void clearButton_Click(object sender, EventArgs e) {
-            DialogResult result = MessageBox.Show("Are you sure you want to clear all?", "This cannot cannot be undone.", MessageBoxButtons.YesNo);
+            DialogResult result = MessageBox.Show("Are you sure you want to clear all?", "Confirm Clear", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes) {
                 assemblyCode.Text = "";
+                machineCode.Text = "";
+                fullObjectCode.Text = "";
             }
         }
 
@@ -30,8 +33,25 @@ namespace MotorolaAssembler
 
             if (saveFileDialog.FileName != "") {
                 System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog.OpenFile();
-                byte[] info = new UTF8Encoding(true).GetBytes(assemblyCode.Text);
-                fs.Write(info, 0, info.Length);
+                if (!fs.CanWrite) {
+                    MessageBox.Show("This file is read-only.", "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    fs.Close();
+                    return;
+                }
+
+                Assembler assembler = new();
+                try {
+                    List<byte[]> machine = assembler.AssembleText(assemblyCode.Text);
+                    List<byte> allBytes = [];
+
+                    foreach (byte[] ba in machine) {
+                        allBytes.AddRange(ba);
+                    }
+
+                    fs.Write(allBytes.ToArray());
+                } catch (Exception exc) {
+                    MessageBox.Show(exc.Message, "Assembling Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 fs.Close();
             }
         }
@@ -56,19 +76,35 @@ namespace MotorolaAssembler
                 fs.Close();
             }
         }
-        private static string ByteArrayToString(byte[] ba) {
-            return BitConverter.ToString(ba).Replace('-', ' ');
+        private static string LineByLineTranslation(List<byte[]> bl) {
+            string constructed = "";
+
+            foreach (byte[] sequence in bl) {
+                constructed = constructed + BitConverter.ToString(sequence) + System.Environment.NewLine;
+            }
+
+            return constructed.ToUpper().Replace('-', ' ');
+        }
+
+        private static string FullTranslation(List<byte[]> bl) {
+            List<byte> allBytes = [];
+            foreach(byte[] ba in bl) {
+                allBytes.AddRange(ba);
+            }
+
+            return BitConverter.ToString(allBytes.ToArray()).ToUpper().Replace('-', ' ');
         }
 
         private void assembleButton_Click(object sender, EventArgs e) {
-            Assembler assembler = new Assembler();
+            Assembler assembler = new();
 
             try {
-                List<byte> machine = assembler.AssembleText(assemblyCode.Text);
-                byte[] bytes = machine.ToArray();
-                machineCode.Text = ByteArrayToString(bytes);
-            } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "An error occured.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                List<byte[]> machine = assembler.AssembleText(assemblyCode.Text);
+                machineCode.Text = LineByLineTranslation(machine);
+                fullObjectCode.Text = FullTranslation(machine);
+            } catch (Exception exc) {
+                machineCode.Text = "";
+                MessageBox.Show(exc.Message, "Assembling Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
