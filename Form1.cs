@@ -58,7 +58,7 @@ namespace MotorolaAssembler
 
         private void loadButton_Click_1(object sender, EventArgs e) {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Assembly file|*.asm|Text document|*.txt";
+            openFileDialog.Filter = "Code file|*.asm;*.txt";
             openFileDialog.Title = "Load an Assembly file";
             openFileDialog.ShowDialog();
 
@@ -80,7 +80,7 @@ namespace MotorolaAssembler
             string constructed = "";
 
             foreach (byte[] sequence in bl) {
-                constructed = constructed + BitConverter.ToString(sequence) + System.Environment.NewLine;
+                constructed += BitConverter.ToString(sequence) + System.Environment.NewLine;
             }
 
             return constructed.ToUpper().Replace('-', ' ');

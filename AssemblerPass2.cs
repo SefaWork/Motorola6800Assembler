@@ -13,10 +13,12 @@ namespace MotorolaAssembler {
 
             List<byte[]> bytes = [];
 
-
             foreach(AssemblerLineData data in this.compiledLines) {
                 this.lineIndex++;
-                if (data.instruction == null) continue;
+                if (data.instruction == null) {
+                    bytes.Add([]);
+                    continue;
+                };
 
                 data.address = this.pc;
 
