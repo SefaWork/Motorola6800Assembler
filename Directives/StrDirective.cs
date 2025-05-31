@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MotorolaAssembler.Directives {
+    /// <summary>
+    /// This class implements the .str directive.
+    /// </summary>
     public class StrDirective : AssemblerDirective {
         public StrDirective() : base("str") {}
 

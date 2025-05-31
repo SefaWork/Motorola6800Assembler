@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MotorolaAssembler {
 
+    /// <summary>
+    /// Each line in pass 1 is converted into an instance of this class. Even comments and empty lines.
+    /// </summary>
     public class AssemblerLineData {
         /// <summary>
         /// Name of the label in this line. This is null if line does not contain a label definition.

@@ -133,6 +133,7 @@
             machineCode.ScrollBars = ScrollBars.Both;
             machineCode.Size = new Size(342, 452);
             machineCode.TabIndex = 6;
+            machineCode.WordWrap = false;
             // 
             // fullObjectCode
             // 

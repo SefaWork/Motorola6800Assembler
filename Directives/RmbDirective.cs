@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MotorolaAssembler.Directives {
+    /// <summary>
+    /// This class implements .rmb directive.
+    /// </summary>
     public class RmbDirective : AssemblerDirective {
         public RmbDirective() : base("rmb") {}
 

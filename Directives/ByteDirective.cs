@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MotorolaAssembler.Directives {
+    /// <summary>
+    /// This class implements .byte and .stb directives.
+    /// </summary>
     public class ByteDirective : AssemblerDirective {
         public ByteDirective(string directive) : base(directive) {}
 

@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MotorolaAssembler.Directives {
+    /// <summary>
+    /// This class implements .org directive.
+    /// </summary>
     public class OrgDirective : AssemblerDirective {
         public OrgDirective() : base("org") {}
 
@@ -25,6 +28,7 @@ namespace MotorolaAssembler.Directives {
             int value = this.ParseValue(valueField) - lineData.address;
             if (value < 0) throw new Exception("Backward traversal with org is not permitted.");
 
+            // Fill each spot with 0x00 byte until we reach our desired program counter.
             return [.. Enumerable.Repeat((byte)0x00, value)];
         }
     }

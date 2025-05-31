@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MotorolaAssembler.Directives {
+    /// <summary>
+    /// This class implements .end directive.
+    /// </summary>
     public class EndDirective : AssemblerDirective {
         public EndDirective() : base("end") {}
 

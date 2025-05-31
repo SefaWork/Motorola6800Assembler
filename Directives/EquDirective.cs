@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MotorolaAssembler.Directives {
+    /// <summary>
+    /// This class implements .equ directive.
+    /// </summary>
     public class EquDirective : AssemblerDirective {
         public EquDirective() : base("equ") {}
 

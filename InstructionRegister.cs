@@ -14,6 +14,11 @@ namespace MotorolaAssembler {
         private static void Register(Instruction instruction) => INSTRUCTION_REGISTER.Add(instruction.mnemonic, instruction);
         private static void RegisterDirective(AssemblerDirective directive) => DIRECTIVE_REGISTER.Add(directive.directive, directive);
 
+        /// <summary>
+        /// Gets instruction by mnemonic from the register.
+        /// </summary>
+        /// <param name="mnemonic"></param>
+        /// <returns></returns>
         public static Instruction? GetInstruction(string mnemonic) {
             if(INSTRUCTION_REGISTER.TryGetValue(mnemonic, out Instruction? found)) {
                 return found;
@@ -22,6 +27,11 @@ namespace MotorolaAssembler {
             }
         }
 
+        /// <summary>
+        /// Gets assembler directive by name from the register.
+        /// </summary>
+        /// <param name="directive"></param>
+        /// <returns></returns>
         public static AssemblerDirective? GetDirective(string directive) {
             if (DIRECTIVE_REGISTER.TryGetValue(directive, out AssemblerDirective? found)) {
                 return found;
@@ -30,8 +40,8 @@ namespace MotorolaAssembler {
             }
         }
 
+        // Static constructor to register our instructions and assembler directives.
         static InstructionRegister() {
-            // Static constructor to register our mnemonics.
 
             // ABA
             Register(new Instruction("aba").SetInherent(0x1B));

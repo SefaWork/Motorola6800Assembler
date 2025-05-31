@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MotorolaAssembler.Directives {
+    /// <summary>
+    /// This class implements the .word and .stw directives.
+    /// </summary>
     public class WordDirective : AssemblerDirective {
         public WordDirective(string directive) : base(directive) {}
 
