@@ -508,11 +508,13 @@ namespace MotorolaAssembler {
             RegisterDirective(new OrgDirective());
             RegisterDirective(new EndDirective());
             RegisterDirective(new EquDirective());
+            RegisterDirective(new RmbDirective());
+            RegisterDirective(new StrDirective());
 
             RegisterDirective(new ByteDirective("byte"));
             RegisterDirective(new ByteDirective("stb"));
-            RegisterDirective(new StrDirective("str"));
-            RegisterDirective(new StrDirective("stw"));
+            RegisterDirective(new WordDirective("word"));
+            RegisterDirective(new WordDirective("stw"));
 
             Debug.WriteLine($"A total of {INSTRUCTION_REGISTER.Count} mnemonics were registered.");
             Debug.WriteLine($"A total of {DIRECTIVE_REGISTER.Count} assembler directives were registered.");

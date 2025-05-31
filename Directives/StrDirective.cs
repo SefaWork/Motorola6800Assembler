@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MotorolaAssembler.Directives {
     public class StrDirective : AssemblerDirective {
-        public StrDirective(string directive) : base(directive) {}
+        public StrDirective() : base("str") {}
 
         private byte[] StringToByteArray(string str) {
             return Encoding.ASCII.GetBytes(str);
