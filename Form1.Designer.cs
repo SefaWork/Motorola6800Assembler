@@ -28,6 +28,7 @@
             loadButton = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
             assembleButton = new ToolStripButton();
+            saveObjectCodeButton = new ToolStripButton();
             machineCode = new TextBox();
             fullObjectCode = new TextBox();
             label1 = new Label();
@@ -53,7 +54,7 @@
             // toolStrip1
             // 
             toolStrip1.ImageScalingSize = new Size(20, 20);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { clearButton, saveButton, loadButton, toolStripSeparator1, assembleButton });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { clearButton, saveButton, loadButton, toolStripSeparator1, assembleButton, saveObjectCodeButton });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(882, 27);
@@ -79,7 +80,7 @@
             saveButton.Name = "saveButton";
             saveButton.Size = new Size(29, 24);
             saveButton.Text = "toolStripButton6";
-            saveButton.ToolTipText = "Save Object Code";
+            saveButton.ToolTipText = "Save Assembly Code";
             saveButton.Click += saveButton_Click;
             // 
             // loadButton
@@ -108,9 +109,21 @@
             assembleButton.ToolTipText = "Assemble Code";
             assembleButton.Click += assembleButton_Click;
             // 
+            // saveObjectCodeButton
+            // 
+            saveObjectCodeButton.Enabled = false;
+            saveObjectCodeButton.Image = (Image)resources.GetObject("saveObjectCodeButton.Image");
+            saveObjectCodeButton.ImageTransparentColor = Color.Magenta;
+            saveObjectCodeButton.Name = "saveObjectCodeButton";
+            saveObjectCodeButton.Size = new Size(151, 24);
+            saveObjectCodeButton.Text = "Save Object Code";
+            saveObjectCodeButton.ToolTipText = "Save Object Code";
+            saveObjectCodeButton.Click += saveObjectCodeButton_Click;
+            // 
             // machineCode
             // 
             machineCode.BackColor = Color.FromArgb(255, 255, 200);
+            machineCode.CharacterCasing = CharacterCasing.Upper;
             machineCode.Font = new Font("Ubuntu Mono", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 0);
             machineCode.Location = new Point(528, 55);
             machineCode.Multiline = true;
@@ -124,6 +137,7 @@
             // fullObjectCode
             // 
             fullObjectCode.BackColor = Color.FromArgb(192, 255, 255);
+            fullObjectCode.CharacterCasing = CharacterCasing.Upper;
             fullObjectCode.Font = new Font("Ubuntu Mono", 8.999999F, FontStyle.Regular, GraphicsUnit.Point, 0);
             fullObjectCode.Location = new Point(12, 513);
             fullObjectCode.Multiline = true;
@@ -187,5 +201,6 @@
         private TextBox fullObjectCode;
         private Label label1;
         private Label label2;
+        private ToolStripButton saveObjectCodeButton;
     }
 }

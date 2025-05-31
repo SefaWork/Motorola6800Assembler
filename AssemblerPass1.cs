@@ -21,7 +21,6 @@ namespace MotorolaAssembler {
 
             foreach(string line in lines) {
                 this.lineIndex++;
-                Debug.WriteLine(this.pc);
                 AssemblerLineData data = new AssemblerLineData() { lineNum = this.lineIndex, address = this.pc };
                 this.compiledLines.Add(data);
 

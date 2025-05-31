@@ -13,7 +13,7 @@ namespace MotorolaAssembler
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e) {
-
+            this.saveObjectCodeButton.Enabled = false;
         }
 
         private void clearButton_Click(object sender, EventArgs e) {
@@ -27,7 +27,7 @@ namespace MotorolaAssembler
 
         private void saveButton_Click(object sender, EventArgs e) {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Binary file|*.bin";
+            saveFileDialog.Filter = "Assembly file|*.asm|Text file|*.txt";
             saveFileDialog.Title = "Save machine code";
             saveFileDialog.ShowDialog();
 
@@ -39,19 +39,7 @@ namespace MotorolaAssembler
                     return;
                 }
 
-                Assembler assembler = new();
-                try {
-                    List<byte[]> machine = assembler.AssembleText(assemblyCode.Text);
-                    List<byte> allBytes = [];
-
-                    foreach (byte[] ba in machine) {
-                        allBytes.AddRange(ba);
-                    }
-
-                    fs.Write(allBytes.ToArray());
-                } catch (Exception exc) {
-                    MessageBox.Show(exc.Message, "Assembling Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                fs.Write(Encoding.UTF8.GetBytes(assemblyCode.Text));
                 fs.Close();
             }
         }
@@ -88,7 +76,7 @@ namespace MotorolaAssembler
 
         private static string FullTranslation(List<byte[]> bl) {
             List<byte> allBytes = [];
-            foreach(byte[] ba in bl) {
+            foreach (byte[] ba in bl) {
                 allBytes.AddRange(ba);
             }
 
@@ -102,9 +90,42 @@ namespace MotorolaAssembler
                 List<byte[]> machine = assembler.AssembleText(assemblyCode.Text);
                 machineCode.Text = LineByLineTranslation(machine);
                 fullObjectCode.Text = FullTranslation(machine);
+                this.saveObjectCodeButton.Enabled = true;
             } catch (Exception exc) {
                 machineCode.Text = "";
+                this.saveObjectCodeButton.Enabled = false;
                 MessageBox.Show(exc.Message, "Assembling Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void saveObjectCodeButton_Click(object sender, EventArgs e) {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Binary file|*.bin";
+            saveFileDialog.Title = "Save machine code";
+            saveFileDialog.ShowDialog();
+
+            if (saveFileDialog.FileName != "") {
+                System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog.OpenFile();
+                if (!fs.CanWrite) {
+                    MessageBox.Show("This file is read-only.", "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    fs.Close();
+                    return;
+                }
+
+                Assembler assembler = new();
+                try {
+                    List<byte[]> machine = assembler.AssembleText(assemblyCode.Text);
+                    List<byte> allBytes = [];
+
+                    foreach (byte[] ba in machine) {
+                        allBytes.AddRange(ba);
+                    }
+
+                    fs.Write(allBytes.ToArray());
+                } catch (Exception exc) {
+                    MessageBox.Show(exc.Message, "Assembling Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                fs.Close();
             }
         }
     }

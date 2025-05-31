@@ -73,7 +73,6 @@ namespace MotorolaAssembler {
         }
 
         private bool TryParse(string valueField, Assembler assembler, AssemblerLineData lineData, out int? outValue) {
-            Debug.WriteLine(valueField);
             int val;
             if(valueField.StartsWith('$')) {
                 valueField = valueField[1..];
@@ -116,7 +115,6 @@ namespace MotorolaAssembler {
                     if (this.immediate == 0x00) throw new Exception("Immediate operand not allowed.");
                     valueField = valueField[1..];
                 } else if(valueField.EndsWith(",x")) {
-                    Debug.WriteLine(this.mnemonic);
                     if (this.indexed == 0x00) throw new Exception("Indexed operand not allowed.");
                     valueField = valueField[..^2];
                 } else if(this.extended != 0x00) {
