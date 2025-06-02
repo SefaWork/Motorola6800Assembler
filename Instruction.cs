@@ -113,7 +113,10 @@ namespace MotorolaAssembler {
                     }
 
                     return true;
+                } else {
+                    assembler.variables.Add(lineData);
                 }
+
             }
 
             return int.TryParse(valueField, style, null, out result);
